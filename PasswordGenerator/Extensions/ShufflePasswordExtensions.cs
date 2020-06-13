@@ -19,7 +19,7 @@ namespace PasswordGenerator
             }
         }
 
-        public static string ShuffleTextSecure(this string source)
+        public static string ShuffleText(this string source)
         {
             var shuffeldChars = source.ShuffleSecure().ToArray();
             return new string(shuffeldChars);

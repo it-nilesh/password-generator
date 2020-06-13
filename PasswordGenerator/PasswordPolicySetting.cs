@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace PasswordGenerator
 {
@@ -29,25 +30,24 @@ namespace PasswordGenerator
             }
         }
 
-        private readonly int _minimumNumberOfChars;
         public PasswordPolicySetting(int minimumNumberOfChars, PasswordPolicy passwordPolicy, PasswordPolicySetting policySetting)
         {
-            _minimumNumberOfChars = minimumNumberOfChars;
             AllLowerCaseChars = policySetting.AllLowerCaseChars;
             AllUpperCaseChars = policySetting.AllUpperCaseChars;
             AllNumericChars = policySetting.AllNumericChars;
             AllSpecialChars = policySetting.AllSpecialChars;
 
-            AllAvailableChars =
-                GetOnlyIfOneCharIsRequired(passwordPolicy.MinimumLowerCaseChars, AllLowerCaseChars) +
-                GetOnlyIfOneCharIsRequired(passwordPolicy.MinimumUpperCaseChars, AllUpperCaseChars) +
-                GetOnlyIfOneCharIsRequired(passwordPolicy.MinimumNumericChars, AllNumericChars) +
-                GetOnlyIfOneCharIsRequired(passwordPolicy.MinimumSpecialChars, AllSpecialChars);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumLowerCaseChars, AllLowerCaseChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumUpperCaseChars, AllUpperCaseChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumNumericChars, AllNumericChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumSpecialChars, AllSpecialChars));
+            AllAvailableChars = stringBuilder.ToString();
         }
 
-        private string GetOnlyIfOneCharIsRequired(int minimum, string allChars)
+        private string GetOnlyIfOneCharIsRequired(int minimumNumberOfChars, int minimum, string allChars)
         {
-            return minimum > 0 || _minimumNumberOfChars == 0 ? allChars : string.Empty;
+            return minimum > 0 || minimumNumberOfChars == 0 ? allChars : string.Empty;
         }
 
         internal string GetCharRange(char minimum, char maximum, string exclusiveChars = "")

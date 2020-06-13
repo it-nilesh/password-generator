@@ -9,12 +9,12 @@ namespace PasswordGenerator
         {
             if (minimumLengthPassword < 1)
             {
-                throw new ArgumentException("The minimumlength is smaller than 1.", nameof(PasswordPolicy.MinimumLengthPassword));
+                throw new ArgumentException("The minimumlength is smaller than 1.", nameof(PasswordPolicy.MinimumPasswordLength));
             }
 
             if (minimumLengthPassword > maximumLengthPassword)
             {
-                throw new ArgumentException("The minimumLength is bigger than the maximum length.", nameof(PasswordPolicy.MaximumLengthPassword));
+                throw new ArgumentException("The minimumLength is bigger than the maximum length.", nameof(PasswordPolicy.MaximumPasswordLength));
             }
 
             if (minimumLowerCaseChars < 0)
@@ -42,7 +42,7 @@ namespace PasswordGenerator
                 throw new ArgumentException(
                         "The minimum length of the password is smaller than the sum " +
                         "of the minimum characters of all catagories.",
-                        nameof(PasswordPolicy.MaximumLengthPassword));
+                        nameof(PasswordPolicy.MaximumPasswordLength));
             }
         }
     }

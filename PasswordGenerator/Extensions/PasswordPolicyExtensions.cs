@@ -10,7 +10,7 @@ namespace PasswordGenerator
         {
             var password = policy.Generate();
             Expression<Action<T, string>> assigner = SetPropertyValue(propertyAccessor);
-            assigner.Compile()(@object, password.GetPassword());
+            assigner.Compile()(@object, password.SecurePassword);
 
             return @object;
         }
@@ -48,7 +48,7 @@ namespace PasswordGenerator
             do
             {
                 RandomSecurePassword securePassword = policy.Generate();
-                finalPassword = securePassword.GetPassword();
+                finalPassword = securePassword.SecurePassword;
                 status = result(finalPassword);
                 maxAttempt--;
             } while (status && maxAttempt > 0);

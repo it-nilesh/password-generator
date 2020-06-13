@@ -4,36 +4,37 @@ namespace PasswordGenerator
 {
     public sealed class RandomSecurePassword
     {
-        private readonly string _randomSecurePassword;
+        public string SecurePassword { get; }
+
         public RandomSecurePassword(string randomSecurePassword)
         {
-            _randomSecurePassword = randomSecurePassword;
+            SecurePassword = randomSecurePassword;
         }
 
         public string GetPassword()
         {
-            return _randomSecurePassword;
+            return SecurePassword;
         }
 
         public string ShuffleText()
         {
-            return _randomSecurePassword.ShuffleTextSecure();
+            return SecurePassword.ShuffleText();
         }
 
         public string GetPasswordStrength()
         {
             var findPasswordStrength = new FindPasswordStrength();
-            return findPasswordStrength.GetPasswordStrength(_randomSecurePassword);
+            return findPasswordStrength.GetPasswordStrength(SecurePassword);
         }
 
         public override string ToString()
         {
-            return _randomSecurePassword;
+            return SecurePassword;
         }
 
-        public void SavePassword(Action<string> passwords)
+        public void SavePassword(Action<string> securePassword)
         {
-            passwords?.Invoke(_randomSecurePassword);
+            securePassword?.Invoke(SecurePassword);
         }
     }
 }

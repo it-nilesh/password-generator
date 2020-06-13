@@ -2,32 +2,32 @@
 {
     public class PasswordPolicyCharacter
     {
-        private char[] _exclusiveLowerCaseChars;
-        private char[] _exclusiveUpperCaseChars;
-        private char[] _inclusiveSpecialChars;
-        private char[] _exclusiveNumericChars;
+        private string _exclusiveLowerCaseChars;
+        private string _exclusiveUpperCaseChars;
+        private string _inclusiveSpecialChars;
+        private string _exclusiveNumericChars;
 
         public PasswordPolicyCharacter ExcludeNumericChars(string chars)
         {
-            _exclusiveNumericChars = chars.ToCharArray();
+            _exclusiveNumericChars = chars;
             return this;
         }
 
         public PasswordPolicyCharacter ExcludeLowerChars(string chars)
         {
-            _exclusiveLowerCaseChars = chars.ToCharArray();
+            _exclusiveLowerCaseChars = chars;
             return this;
         }
 
         public PasswordPolicyCharacter ExcludeUpperChars(string chars)
         {
-            _exclusiveUpperCaseChars = chars.ToCharArray();
+            _exclusiveUpperCaseChars = chars;
             return this;
         }
 
         public PasswordPolicyCharacter IncludeSpecialChars(string chars)
         {
-            _inclusiveSpecialChars = chars.ToCharArray();
+            _inclusiveSpecialChars = chars;
             return this;
         }
 
@@ -35,22 +35,22 @@
         {
             if (_exclusiveLowerCaseChars?.Length > 0)
             {
-                policySetting.AllLowerCaseChars = policySetting.AllLowerCaseChars.Trim(_exclusiveLowerCaseChars);
+                policySetting.AllLowerCaseChars = policySetting.AllLowerCaseChars.ToRemoveChars(_exclusiveLowerCaseChars);
             }
 
             if (_exclusiveUpperCaseChars?.Length > 0)
             {
-                policySetting.AllUpperCaseChars = policySetting.AllUpperCaseChars.Trim(_exclusiveUpperCaseChars);
+                policySetting.AllUpperCaseChars = policySetting.AllUpperCaseChars.ToRemoveChars(_exclusiveUpperCaseChars);
             }
 
             if (_inclusiveSpecialChars?.Length > 0)
             {
-                policySetting.AllSpecialChars = new string(_inclusiveSpecialChars);
+                policySetting.AllSpecialChars = _inclusiveSpecialChars;
             }
 
             if (_exclusiveNumericChars?.Length > 0)
             {
-                policySetting.AllNumericChars = policySetting.AllNumericChars.Trim(_exclusiveNumericChars);
+                policySetting.AllNumericChars = policySetting.AllNumericChars.ToRemoveChars(_exclusiveNumericChars);
             }
         }
     }
