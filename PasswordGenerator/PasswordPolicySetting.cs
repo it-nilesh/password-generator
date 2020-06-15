@@ -7,41 +7,35 @@ namespace PasswordGenerator
     internal sealed class PasswordPolicySetting : IDisposable
     {
         public string AllAvailableChars { get; private set; }
-        internal string AllLowerCaseChars { get; set; }
-        internal string AllUpperCaseChars { get; set; }
-        internal string AllNumericChars { get; set; }
-        internal string AllSpecialChars { get; set; }
+        public string AllLowerCaseChars { get; set; }
+        public string AllUpperCaseChars { get; set; }
+        public string AllNumericChars { get; set; }
+        public string AllSpecialChars { get; set; }
 
-        public PasswordPolicySetting()
+        public PasswordPolicySetting(Policy policy, Action<PasswordCharacter> characterOptions = null)
         {
             AllLowerCaseChars = GetCharRange('a', 'z');
             AllUpperCaseChars = GetCharRange('A', 'Z');
             AllNumericChars = GetCharRange('0', '9');
             AllSpecialChars = @"~!@#$%^&*_-+=`|\(){}[]:;<>,.?/";
-        }
 
-        public void CharsConf(Action<PasswordPolicyCharacter> characterOptions)
-        {
-            if (characterOptions != null)
+            if (characterOptions.IsNotNull())
             {
-                var passwordPolicyCharacters = new PasswordPolicyCharacter();
+                var passwordPolicyCharacters = new PasswordCharacter();
                 characterOptions(passwordPolicyCharacters);
                 passwordPolicyCharacters.SetNewPasswordChars(this);
             }
+
+            SetPasswordOneChar(policy);
         }
 
-        public PasswordPolicySetting(int minimumNumberOfChars, PasswordPolicy passwordPolicy, PasswordPolicySetting policySetting)
+        private void SetPasswordOneChar(Policy policy)
         {
-            AllLowerCaseChars = policySetting.AllLowerCaseChars;
-            AllUpperCaseChars = policySetting.AllUpperCaseChars;
-            AllNumericChars = policySetting.AllNumericChars;
-            AllSpecialChars = policySetting.AllSpecialChars;
-
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumLowerCaseChars, AllLowerCaseChars));
-            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumUpperCaseChars, AllUpperCaseChars));
-            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumNumericChars, AllNumericChars));
-            stringBuilder.Append(GetOnlyIfOneCharIsRequired(minimumNumberOfChars, passwordPolicy.MinimumSpecialChars, AllSpecialChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(policy.MinimumNumberOfChars, policy.MinimumLowerCaseChars, AllLowerCaseChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(policy.MinimumNumberOfChars, policy.MinimumUpperCaseChars, AllUpperCaseChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(policy.MinimumNumberOfChars, policy.MinimumNumericChars, AllNumericChars));
+            stringBuilder.Append(GetOnlyIfOneCharIsRequired(policy.MinimumNumberOfChars, policy.MinimumSpecialChars, AllSpecialChars));
             AllAvailableChars = stringBuilder.ToString();
         }
 
@@ -57,7 +51,8 @@ namespace PasswordGenerator
             {
                 result += value;
             }
-            if (!string.IsNullOrEmpty(exclusiveChars))
+
+            if (exclusiveChars.IsNotNullOrEmpty())
             {
                 var inclusiveChars = result.Except(exclusiveChars).ToArray();
                 result = new string(inclusiveChars);

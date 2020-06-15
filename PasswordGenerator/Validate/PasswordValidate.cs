@@ -4,39 +4,35 @@ namespace PasswordGenerator.Validate
 {
     public class PasswordValidate
     {
-        private int _minimumPasswordLength;
-        private int _maximumPasswordLength;
+        private readonly int _minimumPasswordLength;
+        private readonly int _maximumPasswordLength;
+        private readonly int _maximumUniqueChars;
+
         private int _minimumLowerCaseChars;
         private int _minimumUpperCaseChars;
         private int _minimumNumericChars;
         private int _minimumSpecialChars;
-        private int _maximumUniqueChars;
 
-        public PasswordValidate(int minimumPasswordLength, int maximumPasswordLength,
-                                int minimumLowerCaseChars, int minimumUpperCaseChars,
-                                int minimumNumericChars, int minimumSpecialChars,
-                                int maximumUniqueChars)
+        public PasswordValidate(Policy policy)
         {
-            _minimumPasswordLength = minimumPasswordLength;
-            _maximumPasswordLength = maximumPasswordLength;
-            _minimumLowerCaseChars = minimumLowerCaseChars;
-            _minimumUpperCaseChars = minimumUpperCaseChars;
-            _minimumNumericChars = minimumNumericChars;
-            _minimumSpecialChars = minimumSpecialChars;
-            _maximumUniqueChars = maximumUniqueChars;
+            _minimumPasswordLength = policy.MinimumPasswordLength;
+            _maximumPasswordLength = policy.MaximumPasswordLength;
+            _minimumLowerCaseChars = policy.MinimumLowerCaseChars;
+            _minimumUpperCaseChars = policy.MinimumUpperCaseChars;
+            _minimumNumericChars = policy.MinimumNumericChars;
+            _minimumSpecialChars = policy.MinimumSpecialChars;
+            _maximumUniqueChars = policy.MaximumUniqueChars;
         }
 
         public bool IsValid(string password)
         {
             bool status = false;
-            if (_minimumPasswordLength >= password.Length && password.Length <= _maximumPasswordLength)
+            if (password.Length >= _minimumPasswordLength && password.Length <= _maximumPasswordLength)
             {
-                string d = "";
                 foreach (char c in password)
                 {
                     if (char.IsSymbol(c) || char.IsPunctuation(c))
                     {
-                        d = d + c;
                         _minimumSpecialChars--;
                     }
                     else if (char.IsLower(c))
@@ -61,7 +57,7 @@ namespace PasswordGenerator.Validate
             }
 
 
-            return status && 
+            return status &&
                    IsIsCheckUniqueCharsFrom(password);
         }
 

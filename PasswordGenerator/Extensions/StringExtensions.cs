@@ -18,5 +18,20 @@ namespace PasswordGenerator
         {
             return new string(value.Distinct().ToArray());
         }
+
+        public static bool IsNull(this object @obj)
+        {
+            return (obj is null);
+        }
+
+        public static bool IsNotNull(this object @obj)
+        {
+            return !(obj is null);
+        }
+
+        public static bool IsNotNullOrEmpty(this string str)
+        {
+            return !string.IsNullOrEmpty(str?.Trim());
+        }
     }
 }

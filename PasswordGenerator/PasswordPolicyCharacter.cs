@@ -1,31 +1,33 @@
 ﻿namespace PasswordGenerator
 {
-    public class PasswordPolicyCharacter
+    public sealed class PasswordCharacter
     {
         private string _exclusiveLowerCaseChars;
         private string _exclusiveUpperCaseChars;
         private string _inclusiveSpecialChars;
         private string _exclusiveNumericChars;
 
-        public PasswordPolicyCharacter ExcludeNumericChars(string chars)
+        internal PasswordCharacter() { }
+
+        public PasswordCharacter ExcludeNumericChars(string chars)
         {
             _exclusiveNumericChars = chars;
             return this;
         }
 
-        public PasswordPolicyCharacter ExcludeLowerChars(string chars)
+        public PasswordCharacter ExcludeLowerChars(string chars)
         {
             _exclusiveLowerCaseChars = chars;
             return this;
         }
 
-        public PasswordPolicyCharacter ExcludeUpperChars(string chars)
+        public PasswordCharacter ExcludeUpperChars(string chars)
         {
             _exclusiveUpperCaseChars = chars;
             return this;
         }
 
-        public PasswordPolicyCharacter IncludeSpecialChars(string chars)
+        public PasswordCharacter IncludeSpecialChars(string chars)
         {
             _inclusiveSpecialChars = chars;
             return this;

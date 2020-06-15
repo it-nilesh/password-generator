@@ -6,75 +6,49 @@ namespace PasswordGenerator
 {
     public sealed class PasswordPolicy : IPasswordPolicy
     {
-        public int MinimumPasswordLength { get; }
-        public int MaximumPasswordLength { get; }
-        public int MinimumLowerCaseChars { get; }
-        public int MinimumUpperCaseChars { get; }
-        public int MinimumNumericChars { get; }
-        public int MinimumSpecialChars { get; }
-        public int MaximumUniqueChars { get; }
+        public Policy Policy { get; }
 
         private readonly PasswordPolicySetting _settings;
         private readonly RandomPasswordSecureVersion _randomSecure = new RandomPasswordSecureVersion();
 
-        public PasswordPolicy(int minimumPasswordLength = 4, int maximumPasswordLength = 6,
-                              int minimumLowerCaseChars = 1, int minimumUpperCaseChars = 1,
-                              int minimumNumericChars = 1, int minimumSpecialChars = 1,
-                              int maximumUniqueChars = 0) :
-            this(null, minimumPasswordLength, maximumPasswordLength, minimumLowerCaseChars, minimumUpperCaseChars,
-                        minimumNumericChars, minimumSpecialChars, maximumUniqueChars)
+        public PasswordPolicy(Policy policy) :
+            this(null, policy)
         { }
 
-        public PasswordPolicy(Action<PasswordPolicyCharacter> policyCharsOptions,
-                              int minimumPasswordLength = 4, int maximumPasswordLength = 6,
-                              int minimumLowerCaseChars = 1, int minimumUpperCaseChars = 1,
-                              int minimumNumericChars = 1, int minimumSpecialChars = 1,
-                              int maximumUniqueChars = 0)
+        public PasswordPolicy() :
+           this(null, Policy.Default)
+        { }
 
+        public PasswordPolicy(Action<PasswordCharacter> policyCharsOptions, Policy policy)
         {
-            MinimumPasswordLength = minimumPasswordLength;
-            MaximumPasswordLength = maximumPasswordLength;
-            MinimumLowerCaseChars = minimumLowerCaseChars;
-            MinimumUpperCaseChars = minimumUpperCaseChars;
-            MinimumNumericChars = minimumNumericChars;
-            MinimumSpecialChars = minimumSpecialChars;
-            MaximumUniqueChars = maximumUniqueChars;
-
-            var minimumNumberOfChars = minimumLowerCaseChars + minimumUpperCaseChars + minimumNumericChars + minimumSpecialChars;
-
-            Policy.ThrowIfPolicyIsInValid(minimumPasswordLength, maximumPasswordLength,
-                                          minimumLowerCaseChars, minimumUpperCaseChars, minimumNumericChars,
-                                          minimumSpecialChars, minimumNumberOfChars);
-
-            var passwordConfig = new PasswordPolicySetting();
-            passwordConfig.CharsConf(policyCharsOptions);
-            _settings = new PasswordPolicySetting(minimumNumberOfChars, this, passwordConfig);
+            ValidatePolicy.ThrowIfPolicyIsInValid(policy);
+            _settings = new PasswordPolicySetting(policy, policyCharsOptions);
+            Policy = policy;
         }
 
         public RandomSecurePassword Generate()
         {
             StringBuilder passwordBuilder = new StringBuilder();
-            var lengthOfPassword = _randomSecure.Next(MinimumPasswordLength, MaximumPasswordLength);
-            passwordBuilder.Append(GetRandomString(_settings.AllLowerCaseChars, MinimumLowerCaseChars));
-            passwordBuilder.Append(GetRandomString(_settings.AllUpperCaseChars, MinimumUpperCaseChars));
-            passwordBuilder.Append(GetRandomString(_settings.AllNumericChars, MinimumNumericChars));
-            passwordBuilder.Append(GetRandomString(_settings.AllSpecialChars, MinimumSpecialChars));
+            var lengthOfPassword = _randomSecure.Next(Policy.MinimumPasswordLength, Policy.MaximumPasswordLength);
+            passwordBuilder.Append(GetRandomString(_settings.AllLowerCaseChars, Policy.MinimumLowerCaseChars));
+            passwordBuilder.Append(GetRandomString(_settings.AllUpperCaseChars, Policy.MinimumUpperCaseChars));
+            passwordBuilder.Append(GetRandomString(_settings.AllNumericChars, Policy.MinimumNumericChars));
+            passwordBuilder.Append(GetRandomString(_settings.AllSpecialChars, Policy.MinimumSpecialChars));
             passwordBuilder.Append(GetRandomString(_settings.AllAvailableChars, lengthOfPassword - passwordBuilder.Length));
-
             string password = GetMaxUniqueChars(passwordBuilder.ToString());
             return new RandomSecurePassword(password.ShuffleText());
         }
 
         private string GetMaxUniqueChars(string password)
         {
-            if (MaximumUniqueChars > 0)
+            if (Policy.MaximumUniqueChars > 0)
             {
                 var uniqueChars = password.RemoveDuplicateChars();
                 var charsLength = password.Length - uniqueChars.Length;
-                if (uniqueChars.Length <= MaximumUniqueChars && charsLength > 0)
+
+                if (uniqueChars.Length <= Policy.MaximumUniqueChars && charsLength > 0)
                 {
                     var availableChars = _settings.AllAvailableChars.ToRemoveChars(uniqueChars);
-
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.Append(uniqueChars);
                     stringBuilder.Append(GetRandomString(availableChars, charsLength));
@@ -109,8 +83,7 @@ namespace PasswordGenerator
 
         public bool IsValid(string password)
         {
-            var passwordValidate = new PasswordValidate(MinimumPasswordLength, MaximumPasswordLength, MinimumLowerCaseChars, MinimumUpperCaseChars,
-                                                        MinimumNumericChars, MinimumSpecialChars, MaximumUniqueChars);
+            var passwordValidate = new PasswordValidate(Policy);
             return passwordValidate.IsValid(password);
         }
     }
