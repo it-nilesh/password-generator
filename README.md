@@ -16,6 +16,3 @@ The given below details if pass the 0 of any parameters, then it will not appear
 ## Authors
 **Nilesh** 
 
-
-[Ref URL](https://www.siepman.nl/blog/random-password-generator-with-numbers-and-special-characters) 
-
