@@ -18,4 +18,4 @@ The given below details if pass the 0 of any parameters, then it will not appear
 
 # Donate
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/ily07)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/ilya06)
