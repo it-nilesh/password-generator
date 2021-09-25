@@ -16,6 +16,6 @@ The given below details if pass the 0 of any parameters, then it will not appear
 ## Authors
 **Nilesh** 
 
-# Donation
+# Donate
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme/ily07)
